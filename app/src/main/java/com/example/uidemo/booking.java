@@ -130,7 +130,7 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         try {
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(20000);
+            connection.setConnectTimeout(30000);
             connection.setRequestMethod("GET");  // GET POST
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Charset", "UTF-8");
