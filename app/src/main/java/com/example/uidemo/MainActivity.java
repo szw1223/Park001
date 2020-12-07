@@ -26,30 +26,31 @@ import java.net.SocketAddress;
 
 public class MainActivity extends Activity {
 
+    private static String name, pwd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
 
-    public void register(View vas){
+    public void register(View vas) {
 
         EditText nameEdt = findViewById(R.id.name);
         EditText pwdEdt = findViewById(R.id.pwd);
         final ProgressBar proBar = findViewById(R.id.pro_bar);
 
-        String name = nameEdt.getText().toString();
-        String pwd = pwdEdt.getText().toString();
-        if(name.equals("") || pwd.equals("")) {
+        name = nameEdt.getText().toString();
+        pwd = pwdEdt.getText().toString();
+        if (name.equals("") || pwd.equals("")) {
 
-            Toast.makeText(this,"Name or password empty",Toast.LENGTH_SHORT).show();
-        }else {
+            Toast.makeText(this, "Name or password empty", Toast.LENGTH_SHORT).show();
+        } else {
 
             proBar.setVisibility(View.VISIBLE);
-            new Thread(){
+            new Thread() {
                 @Override
                 public void run() {
-                    for(int i = 0 ; i <= 100 ; i++){
+                    for (int i = 0; i <= 100; i++) {
                         proBar.setProgress(i);
                         try {
                             Thread.sleep(30);
@@ -60,13 +61,13 @@ public class MainActivity extends Activity {
                 }
             }.start();
             scanPorts();
-//            Intent intent = new Intent(MainActivity.this, booking.class);
-//            startActivity(intent);
+            Intent intent = new Intent(MainActivity.this, booking.class);
+            startActivity(intent);
         }
     }
 
     private void scanPorts() {
-        new ScanPorts(1400,1500).start();
+        new ScanPorts(1400, 1500).start();
     }
 
     class ScanPorts extends Thread {
@@ -79,47 +80,29 @@ public class MainActivity extends Activity {
         }
 
         public void run() {
-            try {
+            System.out.println(name + "  " + pwd);
+            for (int i = minPort; i < maxPort; i++) {
+                            try {
                 //创建客户端Socket，指定服务器的IP地址和端口
-                Socket socket = new Socket("192.168.1.185",12345);
+                Socket socket = new Socket("127.0.0.1",5002);
                 //获取输出流，向服务器发送数据
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
-                pw.write("客户端给服务器端发送的数据");
+                pw.write("register 12 12");
                 pw.flush();
                 //关闭输出流
                 socket.shutdownOutput();
-
-                //获取输入流，接收服务器发来的数据
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                String data = null;
-                //读取客户端数据
-                while((data = br.readLine()) != null){
-                    System.out.println("客户端接收到服务器回应的数据：" + data);
-                }
-                //关闭输入流
-                socket.shutdownInput();
-
-                //关闭资源
-                br.close();
-                isr.close();
-                is.close();
                 pw.close();
                 os.close();
-                socket.close();
+//                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-//            for (int i = minPort; i < maxPort; i++ ) {
+            }
 //                Socket s = new Socket();
-//                SocketAddress socketaddress = new InetSocketAddress("192.168.1.185",12345);
-//
-//
 //                Socket socket = new Socket();
-//                SocketAddress socketaddress = new InetSocketAddress("192.168.1.185",i);
+//                SocketAddress socketaddress = new InetSocketAddress("127.0.0.1",5002);
 //                try {
 //                    socket.connect(socketaddress, 50);
 //                    handler.sendEmptyMessage(i);
@@ -131,6 +114,41 @@ public class MainActivity extends Activity {
 //                }
 //            }
 
+        }
+        private Handler handler = new Handler();
     }
-    private Handler handler = new Handler();
-}
+
+//            try {
+//                //创建客户端Socket，指定服务器的IP地址和端口
+//                Socket socket = new Socket("127.0.0.1",5002);
+//                //获取输出流，向服务器发送数据
+//                OutputStream os = socket.getOutputStream();
+//                PrintWriter pw = new PrintWriter(os);
+//                pw.write("register 12 12");
+//                pw.flush();
+//                //关闭输出流
+//                socket.shutdownOutput();
+//                pw.close();
+//                os.close();
+//                socket.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+////                获取输入流，接收服务器发来的数据
+//                InputStream is = socket.getInputStream();
+//                InputStreamReader isr = new InputStreamReader(is);
+//                BufferedReader br = new BufferedReader(isr);
+//                String data = null;
+//                //读取客户端数据
+//                while((data = br.readLine()) != null){
+//                    System.out.println("客户端接收到服务器回应的数据：" + data);
+//                }
+//                //关闭输入流
+//                socket.shutdownInput();
+//
+////                关闭资源
+//                br.close();
+//                isr.close();
+//                is.close();
