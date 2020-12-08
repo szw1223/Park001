@@ -2,7 +2,6 @@ package com.example.uidemo;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,12 +9,13 @@ import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Calendar;
 
 import static android.text.format.DateFormat.format;
@@ -37,9 +37,6 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         setContentView(R.layout.activity_booking);
         timer1 = findViewById(R.id.timer_1);
         timer2 = findViewById(R.id.timer_2);
-        if(getIntent() != null) {
-            String namePwd = getIntent().getStringExtra((MainActivity.NAME_PWD));
-        }
         findViews();
         setListeners();
     }
@@ -105,92 +102,147 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String urlString = "https://www.youtube.com/watch?v=1aBrrAxbYyA";
-                        mResult = requestDataByGet(urlString);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mResult = decode(mResult);
-                                mTextView.setText(mResult);
-                            }
-                        });
+                        new ScanPorts(5002).start();
                     }
                 }).start();
                 break;
         }
     }
 
-    private String requestDataByGet(String urlString) {
-        String result = null;
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(30000);
-            connection.setRequestMethod("GET");  // GET POST
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Charset", "UTF-8");
-            connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = connection.getInputStream();
-                result = streamToString(inputStream);
-            } else {
-                String responseMessage = connection.getResponseMessage();
-                Log.e(TAG, "requestDataByPost: " + responseMessage);
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    class ScanPorts extends Thread {
+        private int port;
+        public ScanPorts(int port){
+            this.port = port;
         }
-        return result;
-    }
+        private String namePwd;
 
-    public String streamToString(InputStream is) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = is.read(buffer)) != -1) {
-                baos.write(buffer, 0, len);
+        public void run() {
+            if(getIntent() != null) {
+                namePwd = getIntent().getStringExtra((MainActivity.NAME_PWD));
             }
-            baos.close();
-            is.close();
-            byte[] byteArray = baos.toByteArray();
-            return new String(byteArray);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            return null;
-        }
-    }
+            try {
+                //assign server address and port number
+                Socket socket = new Socket("10.140.42.143",port);
+                //send data
+                OutputStream os = socket.getOutputStream();
+                PrintWriter pw = new PrintWriter(os);
+                pw.write("book " + namePwd + " " + Integer.toString(t2H) + " " + Integer.toString(t1H));
+                pw.flush();
+                //shut outputstream
 
-    public static String decode(String unicodeStr) {
-        if (unicodeStr == null) {
-            return null;
-        }
-        StringBuilder retBuf = new StringBuilder();
-        int maxLoop = unicodeStr.length();
-        for (int i = 0; i < maxLoop; i++) {
-            if (unicodeStr.charAt(i) == '\\') {
-                if ((i < maxLoop - 5)
-                        && ((unicodeStr.charAt(i + 1) == 'u') || (unicodeStr
-                        .charAt(i + 1) == 'U')))
-                    try {
-                        retBuf.append((char) Integer.parseInt(unicodeStr.substring(i + 2, i + 6), 16));
-                        i += 5;
-                    } catch (NumberFormatException localNumberFormatException) {
-                        retBuf.append(unicodeStr.charAt(i));
-                    }
-                else {
-                    retBuf.append(unicodeStr.charAt(i));
+
+                InputStream is = socket.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String msg;
+                while((msg = br.readLine()) != null) {
+                    System.out.println("我是客户端，服务端说："+ msg);
                 }
-            } else {
-                retBuf.append(unicodeStr.charAt(i));
+                br.close();
+                isr.close();
+                is.close();
+                pw.close();
+                os.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        return retBuf.toString();
     }
+
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.getButton:
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        String urlString = "https://www.youtube.com/watch?v=1aBrrAxbYyA";
+//                        mResult = requestDataByGet(urlString);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mResult = decode(mResult);
+//                                mTextView.setText(mResult);
+//                            }
+//                        });
+//                    }
+//                }).start();
+//                break;
+//        }
+//    }
+
+//    private String requestDataByGet(String urlString) {
+//        String result = null;
+//        try {
+//            URL url = new URL(urlString);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setConnectTimeout(30000);
+//            connection.setRequestMethod("GET");  // GET POST
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("Charset", "UTF-8");
+//            connection.setRequestProperty("Accept-Charset", "UTF-8");
+//            connection.connect();
+//            int responseCode = connection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                InputStream inputStream = connection.getInputStream();
+//                result = streamToString(inputStream);
+//            } else {
+//                String responseMessage = connection.getResponseMessage();
+//                Log.e(TAG, "requestDataByPost: " + responseMessage);
+//            }
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+//
+//    public String streamToString(InputStream is) {
+//        try {
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            byte[] buffer = new byte[1024];
+//            int len;
+//            while ((len = is.read(buffer)) != -1) {
+//                baos.write(buffer, 0, len);
+//            }
+//            baos.close();
+//            is.close();
+//            byte[] byteArray = baos.toByteArray();
+//            return new String(byteArray);
+//        } catch (Exception e) {
+//            Log.e(TAG, e.toString());
+//            return null;
+//        }
+//    }
+//
+//    public static String decode(String unicodeStr) {
+//        if (unicodeStr == null) {
+//            return null;
+//        }
+//        StringBuilder retBuf = new StringBuilder();
+//        int maxLoop = unicodeStr.length();
+//        for (int i = 0; i < maxLoop; i++) {
+//            if (unicodeStr.charAt(i) == '\\') {
+//                if ((i < maxLoop - 5)
+//                        && ((unicodeStr.charAt(i + 1) == 'u') || (unicodeStr
+//                        .charAt(i + 1) == 'U')))
+//                    try {
+//                        retBuf.append((char) Integer.parseInt(unicodeStr.substring(i + 2, i + 6), 16));
+//                        i += 5;
+//                    } catch (NumberFormatException localNumberFormatException) {
+//                        retBuf.append(unicodeStr.charAt(i));
+//                    }
+//                else {
+//                    retBuf.append(unicodeStr.charAt(i));
+//                }
+//            } else {
+//                retBuf.append(unicodeStr.charAt(i));
+//            }
+//        }
+//        return retBuf.toString();
+//    }
 }
 
 //    private void handleJSONData(String json) {
