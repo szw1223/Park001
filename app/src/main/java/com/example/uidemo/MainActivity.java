@@ -28,14 +28,11 @@ public class MainActivity extends Activity {
         EditText nameEdt = findViewById(R.id.name);
         EditText pwdEdt = findViewById(R.id.pwd);
         final ProgressBar proBar = findViewById(R.id.pro_bar);
-
         name = nameEdt.getText().toString();
         pwd = pwdEdt.getText().toString();
         if (name.equals("") || pwd.equals("")) {
-
             Toast.makeText(this, "Name or password empty", Toast.LENGTH_SHORT).show();
         } else {
-
             proBar.setVisibility(View.VISIBLE);
             new Thread() {
                 @Override
