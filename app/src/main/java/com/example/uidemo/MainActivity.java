@@ -1,28 +1,17 @@
 package com.example.uidemo;
 
 import android.app.Activity;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 
 public class MainActivity extends Activity {
 
@@ -74,7 +63,7 @@ public class MainActivity extends Activity {
         private int minPort;
         private int maxPort;
 
-        public ScanPorts(int minport, int maxport) {
+        public ScanPorts(int minport, int maxport){
             this.maxPort = maxport;
             this.minPort = minport;
         }
@@ -84,7 +73,7 @@ public class MainActivity extends Activity {
             for (int i = minPort; i < maxPort; i++) {
                 try {
                     //创建客户端Socket，指定服务器的IP地址和端口
-                    Socket socket = new Socket("127.0.0.1",5002);
+                    Socket socket = new Socket("10.140.42.143",5002);
                     //获取输出流，向服务器发送数据
                     OutputStream os = socket.getOutputStream();
                     PrintWriter pw = new PrintWriter(os);
@@ -96,24 +85,46 @@ public class MainActivity extends Activity {
                     os.close();
 //                  socket.close();
                 } catch (IOException e) {
-                        e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
-//                Socket s = new Socket();
-//                Socket socket = new Socket();
-//                SocketAddress socketaddress = new InetSocketAddress("127.0.0.1",5002);
+
+    }
+
+
+
+//    class ScanPorts extends Thread {
+//        private int minPort;
+//        private int maxPort;
+//
+//        public ScanPorts(int minport, int maxport){
+//            this.maxPort = maxport;
+//            this.minPort = minport;
+//        }
+//
+//        public void run() {
+//            System.out.println(name + "  " + pwd);
+//            for (int i = minPort; i < maxPort; i++) {
 //                try {
-//                    socket.connect(socketaddress, 50);
-//                    handler.sendEmptyMessage(i);
-//                    socket.close();
-//                    Intent intent = new Intent(MainActivity.this, booking.class);
-//                    startActivity(intent);
+//                    //创建客户端Socket，指定服务器的IP地址和端口
+//                    Socket socket = new Socket("10.140.42.143",5002);
+//                    //获取输出流，向服务器发送数据
+//                    OutputStream os = socket.getOutputStream();
+//                    PrintWriter pw = new PrintWriter(os);
+//                    pw.write("register 12 12");
+//                    pw.flush();
+//                    //关闭输出流
+//                    socket.shutdownOutput();
+//                    pw.close();
+//                    os.close();
+////                  socket.close();
 //                } catch (IOException e) {
-//                    e.printStackTrace();
+//                        e.printStackTrace();
 //                }
 //            }
-    }
-//        private Handler handler = new Handler();
+//        }
+//
+//    }
 }
 
