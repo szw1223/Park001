@@ -40,22 +40,18 @@ public class MainActivity extends Activity {
                     for (int i = 0; i <= 100; i++) {
                         proBar.setProgress(i);
                         try {
-                            Thread.sleep(30);
-                            scanPorts();
-                            Intent intent = new Intent(MainActivity.this, booking.class);
-                            intent.putExtra(NAME_PWD, new String[]{name, pwd});
-                            startActivity(intent);
+                            Thread.sleep(20);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
+                    new ScanPorts(5002).start();
+                    Intent intent = new Intent(MainActivity.this, booking.class);
+                    intent.putExtra(NAME_PWD, new String[]{name, pwd});
+                    startActivity(intent);
                 }
             }.start();
         }
-    }
-
-    private void scanPorts() {
-        new ScanPorts(5002).start();
     }
 
     class ScanPorts extends Thread {
@@ -66,18 +62,18 @@ public class MainActivity extends Activity {
         public void run() {
             System.out.println(name + "  " + pwd);
             try {
-                //创建客户端Socket，指定服务器的IP地址和端口
+                //assign server address and port number
                 Socket socket = new Socket("10.140.42.143",port);
-                //获取输出流，向服务器发送数据
+                //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
                 pw.write("register " + name + " "+ pwd);
                 pw.flush();
-                //关闭输出流
+                //shut outputstream
                 socket.shutdownOutput();
                 pw.close();
                 os.close();
-//                socket.close();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
