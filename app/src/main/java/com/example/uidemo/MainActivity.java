@@ -41,16 +41,16 @@ public class MainActivity extends Activity {
                         proBar.setProgress(i);
                         try {
                             Thread.sleep(30);
+                            scanPorts();
+                            Intent intent = new Intent(MainActivity.this, booking.class);
+                            intent.putExtra(NAME_PWD, new String[]{name, pwd});
+                            startActivity(intent);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }.start();
-            scanPorts();
-            Intent intent = new Intent(MainActivity.this, booking.class);
-            intent.putExtra(NAME_PWD, new String[]{name, pwd});
-            startActivity(intent);
         }
     }
 
