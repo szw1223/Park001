@@ -15,7 +15,7 @@ import java.net.Socket;
 
 public class MainActivity extends Activity {
 
-    public static final String NAME_PWD = "name_pwd";
+    public static final String NAME = "name_";
     private static String name, pwd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
                     }
                     new ScanPorts(5002).start();
                     Intent intent = new Intent(MainActivity.this, booking.class);
-                    intent.putExtra(NAME_PWD, new String[]{name, pwd});
+                    intent.putExtra(NAME, name);
                     startActivity(intent);
                 }
             }.start();

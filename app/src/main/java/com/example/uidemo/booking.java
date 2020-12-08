@@ -114,11 +114,11 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         public ScanPorts(int port){
             this.port = port;
         }
-        private String namePwd;
+        private String name;
 
         public void run() {
             if(getIntent() != null) {
-                namePwd = getIntent().getStringExtra((MainActivity.NAME_PWD));
+                name = getIntent().getStringExtra((MainActivity.NAME));
             }
             try {
                 //assign server address and port number
@@ -126,7 +126,7 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
                 //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
-                pw.write("book " + namePwd + " " + Integer.toString(t2H) + " " + Integer.toString(t1H));
+                pw.write("book " + name + " " + Integer.toString(t2H) + " " + Integer.toString(t1H));
                 pw.flush();
                 //shut outputstream
 
@@ -136,14 +136,16 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
                 BufferedReader br = new BufferedReader(isr);
                 String msg;
                 while((msg = br.readLine()) != null) {
-                    System.out.println("我是客户端，服务端说："+ msg);
+                    System.out.println(msg);
                 }
+                mTextView.setText(msg);
                 br.close();
                 isr.close();
                 is.close();
                 pw.close();
                 os.close();
                 socket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
