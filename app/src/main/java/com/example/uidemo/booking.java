@@ -1,20 +1,14 @@
 package com.example.uidemo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,20 +16,16 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import static android.text.format.DateFormat.format;
-import static java.text.DateFormat.*;
 
 public class booking extends AppCompatActivity implements View.OnClickListener{
 
     TextView timer1, timer2;
     int t1H, t1M, t2H, t2M;
 
-    private TextView mTextView;
+    private TextView mTextView, begTV, endTV;
     private Button mButton;
     private static final String TAG = "NetworkActivity";
     private String mResult;
@@ -47,15 +37,18 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         setContentView(R.layout.activity_booking);
         timer1 = findViewById(R.id.timer_1);
         timer2 = findViewById(R.id.timer_2);
-
+        if(getIntent() != null) {
+            String namePwd = getIntent().getStringExtra((MainActivity.NAME_PWD));
+        }
         findViews();
         setListeners();
-
     }
+
     private void findViews() {
         mTextView = findViewById(R.id.textView);
+        begTV = findViewById(R.id.TVbeginning);
+        endTV = findViewById(R.id.TVending);
         mButton = findViewById(R.id.getButton);
-
     }
 
     private void setListeners() {
@@ -73,8 +66,9 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
                                 Calendar calendar= Calendar.getInstance();
                                 calendar.set(0,0,0,t1H,t1M);
                                 timer1.setText(format("hh:mm aa",calendar));
+                                endTV.setText(Integer.toString(t1H) + " : " + Integer.toString(t1M));
                             }
-                        },12,0,false
+                        },24,0,false
                 );
                 timePickerDialog.updateTime(t1H,t1M);
                 timePickerDialog.show();
@@ -94,8 +88,9 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
                                 Calendar calendar= Calendar.getInstance();
                                 calendar.set(0,0,0,t1H,t1M);
                                 timer2.setText(format("hh:mm aa",calendar));
+                                begTV.setText(Integer.toString(t2H) + " : "  + Integer.toString(t2M));
                             }
-                        },12,0,false
+                        },24,0,false
                 );
                 timePickerDialog.updateTime(t2H,t2M);
                 timePickerDialog.show();
@@ -152,42 +147,6 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         return result;
     }
 
-    private void handleJSONData(String json) {
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-
-            LessonResult lessonResult = new LessonResult();
-            List<LessonResult.Lesson> lessonList = new ArrayList<>();
-            int status = jsonObject.getInt("status");
-            JSONArray lessons = jsonObject.getJSONArray("data");
-            if (lessons != null && lessons.length() > 0) {
-                for (int index = 0; index < lessons.length(); index++) {
-                    JSONObject item = (JSONObject) lessons.get(0);
-                    int id = item.getInt("id");
-                    String name = item.getString("name");
-                    String smallPic = item.getString("picSmall");
-                    String bigPic = item.getString("picBig");
-                    String description = item.getString("description");
-                    int learner = item.getInt("learner");
-
-                    LessonResult.Lesson lesson = new LessonResult.Lesson();
-                    lesson.setID(id);
-                    lesson.setName(name);
-                    lesson.setSmallPictureUrl(smallPic);
-                    lesson.setBigPictureUrl(bigPic);
-                    lesson.setDescription(description);
-                    lesson.setLearnerNumber(learner);
-                    lessonList.add(lesson);
-                }
-                lessonResult.setStatus(status);
-                lessonResult.setLessons(lessonList);
-                mTextView.setText("data is : " + lessonResult.toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String streamToString(InputStream is) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -233,3 +192,39 @@ public class booking extends AppCompatActivity implements View.OnClickListener{
         return retBuf.toString();
     }
 }
+
+//    private void handleJSONData(String json) {
+//        try {
+//            JSONObject jsonObject = new JSONObject(json);
+//
+//            LessonResult lessonResult = new LessonResult();
+//            List<LessonResult.Lesson> lessonList = new ArrayList<>();
+//            int status = jsonObject.getInt("status");
+//            JSONArray lessons = jsonObject.getJSONArray("data");
+//            if (lessons != null && lessons.length() > 0) {
+//                for (int index = 0; index < lessons.length(); index++) {
+//                    JSONObject item = (JSONObject) lessons.get(0);
+//                    int id = item.getInt("id");
+//                    String name = item.getString("name");
+//                    String smallPic = item.getString("picSmall");
+//                    String bigPic = item.getString("picBig");
+//                    String description = item.getString("description");
+//                    int learner = item.getInt("learner");
+//
+//                    LessonResult.Lesson lesson = new LessonResult.Lesson();
+//                    lesson.setID(id);
+//                    lesson.setName(name);
+//                    lesson.setSmallPictureUrl(smallPic);
+//                    lesson.setBigPictureUrl(bigPic);
+//                    lesson.setDescription(description);
+//                    lesson.setLearnerNumber(learner);
+//                    lessonList.add(lesson);
+//                }
+//                lessonResult.setStatus(status);
+//                lessonResult.setLessons(lessonList);
+//                mTextView.setText("data is : " + lessonResult.toString());
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }

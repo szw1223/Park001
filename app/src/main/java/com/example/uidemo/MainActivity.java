@@ -15,6 +15,7 @@ import java.net.Socket;
 
 public class MainActivity extends Activity {
 
+    public static final String NAME_PWD = "name_pwd";
     private static String name, pwd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,80 +52,39 @@ public class MainActivity extends Activity {
             }.start();
             scanPorts();
             Intent intent = new Intent(MainActivity.this, booking.class);
+            intent.putExtra(NAME_PWD, new String[]{name, pwd});
             startActivity(intent);
         }
     }
 
     private void scanPorts() {
-        new ScanPorts(1400, 1500).start();
+        new ScanPorts(5002).start();
     }
 
     class ScanPorts extends Thread {
-        private int minPort;
-        private int maxPort;
-
-        public ScanPorts(int minport, int maxport){
-            this.maxPort = maxport;
-            this.minPort = minport;
+        private int port;
+        public ScanPorts(int port){
+            this.port = port;
         }
-
         public void run() {
             System.out.println(name + "  " + pwd);
-            for (int i = minPort; i < maxPort; i++) {
-                try {
-                    //创建客户端Socket，指定服务器的IP地址和端口
-                    Socket socket = new Socket("10.140.42.143",5002);
-                    //获取输出流，向服务器发送数据
-                    OutputStream os = socket.getOutputStream();
-                    PrintWriter pw = new PrintWriter(os);
-                    pw.write("register 12 12");
-                    pw.flush();
-                    //关闭输出流
-                    socket.shutdownOutput();
-                    pw.close();
-                    os.close();
-//                  socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                //创建客户端Socket，指定服务器的IP地址和端口
+                Socket socket = new Socket("10.140.42.143",port);
+                //获取输出流，向服务器发送数据
+                OutputStream os = socket.getOutputStream();
+                PrintWriter pw = new PrintWriter(os);
+                pw.write("register " + name + " "+ pwd);
+                pw.flush();
+                //关闭输出流
+                socket.shutdownOutput();
+                pw.close();
+                os.close();
+//                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-
     }
-
-
-
-//    class ScanPorts extends Thread {
-//        private int minPort;
-//        private int maxPort;
-//
-//        public ScanPorts(int minport, int maxport){
-//            this.maxPort = maxport;
-//            this.minPort = minport;
-//        }
-//
-//        public void run() {
-//            System.out.println(name + "  " + pwd);
-//            for (int i = minPort; i < maxPort; i++) {
-//                try {
-//                    //创建客户端Socket，指定服务器的IP地址和端口
-//                    Socket socket = new Socket("10.140.42.143",5002);
-//                    //获取输出流，向服务器发送数据
-//                    OutputStream os = socket.getOutputStream();
-//                    PrintWriter pw = new PrintWriter(os);
-//                    pw.write("register 12 12");
-//                    pw.flush();
-//                    //关闭输出流
-//                    socket.shutdownOutput();
-//                    pw.close();
-//                    os.close();
-////                  socket.close();
-//                } catch (IOException e) {
-//                        e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//    }
 }
 
