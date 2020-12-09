@@ -14,7 +14,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class MainActivity extends Activity {
-
+    public static final String host = "10.140.42.143";
+    public static final int port = 5002;
     public static final String NAME = "name_";
     private static String name, pwd;
     @Override
@@ -45,7 +46,7 @@ public class MainActivity extends Activity {
                             e.printStackTrace();
                         }
                     }
-                    new ScanPorts(5002).start();
+                    new ScanPorts(port).start();
                     Intent intent = new Intent(MainActivity.this, booking.class);
                     intent.putExtra(NAME, name);
                     startActivity(intent);
@@ -63,7 +64,7 @@ public class MainActivity extends Activity {
             System.out.println(name + "  " + pwd);
             try {
                 //assign server address and port number
-                Socket socket = new Socket("10.136.31.26",port);
+                Socket socket = new Socket(host,port);
                 //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
