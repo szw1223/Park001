@@ -7,15 +7,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
 import androidx.appcompat.app.AppCompatActivity;
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Calendar;
+import java.util.Scanner;
+
 import static android.text.format.DateFormat.format;
 import static com.example.uidemo.MainActivity.NAME;
 
@@ -112,37 +113,40 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
 
     class ScanPorts extends Thread {
         private int port;
-
         public ScanPorts(int port) {
             this.port = port;
         }
-
         private String name;
-
         public void run() {
             if (getIntent() != null) {
                 name = getIntent().getStringExtra((NAME));
             }
             try {
                 //assign server address and port number
-                Socket socket = new Socket("10.140.42.143", port);
+                Socket socket = new Socket("10.136.31.26", port);
                 //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
                 pw.write("book " + name + " " + Integer.toString(t2H) + " " + Integer.toString(t1H + 1));
                 pw.flush();
                 //shut outputstream
+//
+//                InputStream is = socket.getInputStream();
+//                InputStreamReader isr = new InputStreamReader(is);
+//                BufferedReader br = new BufferedReader(isr);
+//                String msg;
+//                while ((msg = br.readLine()) != null) {
+//                    System.out.println(msg);
+//                }
+//                br.close();
+//                isr.close();
+//                is.close();
+                System.out.println("----->rec start");
+                Scanner inScanner = new Scanner(socket.getInputStream());
+                String msg = inScanner.nextLine();
+                System.out.println("----->rec ="+msg);
 
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                String msg;
-                while ((msg = br.readLine()) != null) {
-                    System.out.println(msg);
-                }
-                br.close();
-                isr.close();
-                is.close();
+                inScanner.close();
                 pw.close();
                 os.close();
                 socket.close();

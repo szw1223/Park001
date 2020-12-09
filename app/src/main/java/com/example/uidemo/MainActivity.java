@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
                     for (int i = 0; i <= 100; i++) {
                         proBar.setProgress(i);
                         try {
-                            Thread.sleep(20);
+                            Thread.sleep(5);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
             System.out.println(name + "  " + pwd);
             try {
                 //assign server address and port number
-                Socket socket = new Socket("10.140.42.143",port);
+                Socket socket = new Socket("10.136.31.26",port);
                 //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
