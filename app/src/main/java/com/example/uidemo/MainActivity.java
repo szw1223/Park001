@@ -69,7 +69,6 @@ public class MainActivity extends Activity {
                 PrintWriter pw = new PrintWriter(os);
                 pw.write("register " + name + " "+ pwd);
                 pw.flush();
-                //shut outputstream
                 socket.shutdownOutput();
                 pw.close();
                 os.close();

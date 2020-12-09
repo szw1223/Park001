@@ -1,6 +1,7 @@
 package com.example.uidemo;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,20 +17,25 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Calendar;
 import static android.text.format.DateFormat.format;
+import static com.example.uidemo.MainActivity.NAME;
 
 public class booking extends AppCompatActivity implements View.OnClickListener {
 
     TextView timer1, timer2;
     int t1H, t1M, t2H, t2M;
 
-    private TextView mTextView, begTV, endTV;
+    private TextView begTV, endTV;
     private Button mButton;
     private static final String TAG = "NetworkActivity";
     private String mResult;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent() != null) {
+            name = getIntent().getStringExtra((NAME));
+        }
         setContentView(R.layout.activity_booking);
         timer1 = findViewById(R.id.timer_1);
         timer2 = findViewById(R.id.timer_2);
@@ -38,7 +44,6 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void findViews() {
-        mTextView = findViewById(R.id.textView);
         begTV = findViewById(R.id.TVbeginning);
         endTV = findViewById(R.id.TVending);
         mButton = findViewById(R.id.getButton);
@@ -116,7 +121,7 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
 
         public void run() {
             if (getIntent() != null) {
-                name = getIntent().getStringExtra((MainActivity.NAME));
+                name = getIntent().getStringExtra((NAME));
             }
             try {
                 //assign server address and port number
@@ -135,14 +140,15 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
                 while ((msg = br.readLine()) != null) {
                     System.out.println(msg);
                 }
-                mTextView.setText(msg);
                 br.close();
                 isr.close();
                 is.close();
                 pw.close();
                 os.close();
                 socket.close();
-
+                Intent intent = new Intent(booking.this, resultActivity.class);
+                intent.putExtra(NAME, name + " " + msg);
+                startActivity(intent);
             } catch (IOException e) {
                 e.printStackTrace();
             }
