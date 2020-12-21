@@ -30,7 +30,6 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
     int t1H, t1M, t2H, t2M;
     private TextView begTV, endTV;
     private Button mButton;
-    private String mResult;
     private String name;
     public static final String POSIT = "posit";
 
@@ -129,7 +128,7 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
                 //send data
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
-                pw.write("book " + name + " " + Integer.toString(t2H) + " " + Integer.toString(t1H + 1));
+                pw.write("booking " + name + " " + Integer.toString(t2H) + " " + Integer.toString(t1H + 1));
                 pw.flush();
                 //shut outputstream
                 InputStream is = socket.getInputStream();
@@ -140,8 +139,6 @@ public class booking extends AppCompatActivity implements View.OnClickListener {
                 msg = br.readLine();
 
                 System.out.println("----->rec start");
-//                Scanner inScanner = new Scanner(socket.getInputStream());
-//                String msg = inScanner.nextLine();
                 System.out.println("----->rec ="+msg);
 
 //                inScanner.close();

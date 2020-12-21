@@ -8,14 +8,18 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 public class MainActivity extends Activity {
-    public static final String host = "10.140.42.143";
-    public static final int port = 5002;
+//    public static final String host = "10.140.42.143";
+    public static final String host = "10.140.24.8";
+    public static final int port = 12345;
     public static final String NAME = "name_";
     private static String name, pwd;
     @Override
@@ -69,7 +73,13 @@ public class MainActivity extends Activity {
                 OutputStream os = socket.getOutputStream();
                 PrintWriter pw = new PrintWriter(os);
                 pw.write("register " + name + " "+ pwd);
+
                 pw.flush();
+
+                InputStream is = socket.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+
                 socket.shutdownOutput();
                 pw.close();
                 os.close();

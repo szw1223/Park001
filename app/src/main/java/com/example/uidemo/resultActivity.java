@@ -37,12 +37,13 @@ public class resultActivity extends AppCompatActivity {
             result = getIntent().getStringExtra((booking.POSIT));
         }
         positionTV.setText(result);
+        positionTV.setTextSize(15);
     }
     public void arrive(View vas) {
         new Thread() {
             @Override
             public void run() {
-                new ScanPorts01(5002).start();
+                new ScanPorts01(port).start();
             }
         }.start();
     }
@@ -61,10 +62,21 @@ public class resultActivity extends AppCompatActivity {
                 PrintWriter pw = new PrintWriter(os);
                 pw.write("arrive " + result);
                 pw.flush();
+                System.out.println("----->rec start");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        arriveButton.setText("arrived !");
+                        arriveButton.setTextSize(10);
+                    }
+                });
+
+                System.out.println("----->rec start");
                 //shut outputstream
                 pw.close();
                 os.close();
                 socket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -96,13 +108,17 @@ public class resultActivity extends AppCompatActivity {
                 InputStream is = socket.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr);
-                String msg;
+                final String msg;
                 System.out.println("----->rec start");
                 msg = br.readLine();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        checkTV.setText(msg);
+                        checkTV.setTextSize(10);
+                    }
+                });
 
-                checkTV.setText(msg);
-//                Scanner inScanner = new Scanner(socket.getInputStream());
-//                String msg = inScanner.nextLine();
                 System.out.println("----->rec ="+msg);
                 br.close();
                 isr.close();
